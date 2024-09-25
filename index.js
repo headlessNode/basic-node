@@ -1,40 +1,23 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
+const app = express();
 
-const server = http.createServer((req, res) => {
-    let path = './';
-    switch(req.url) {
-        case '/':
-            path += 'index.html';
-            res.statusCode = 200;
-            break;
-        case '/about':
-            path += 'about.html';
-            res.statusCode = 200;
-            break;
-        case '/contact':
-            path += 'contact-me.html';
-            res.statusCode = 200;
-            break;
-        default:
-            path += '404.html';
-            res.statusCode = 404;
-            break;
-    }
-
-    // Read the file
-    fs.readFile(path, (err, data) => {
-        if(err) {
-            console.log(err);
-            res.writeHead(500, {'Content-Type': 'text/plain'});
-            res.end('Internal Server Error');
-        } else {
-            res.writeHead(res.statusCode, {'Content-Type': 'text/html'});
-            res.end(data);
-        }
-    });
+app.get('/', (req, res) => {
+    res.sendFile('./index.html', {root: __dirname});
 });
 
-server.listen(3000, 'localhost', () => {
-    console.log('Listening for requests on port 300');
+app.get('/about', (req, res) => {
+    res.sendFile('./about.html', {root: __dirname});
+});
+
+app.get('/contact', (req, res) => {
+    res.sendFile('./contact-me.html', {root: __dirname});
+});
+
+app.get('*', (req, res) => {
+    res.status(404).sendFile('./404.html', {root: __dirname});
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log( "server is listening" );
 });
